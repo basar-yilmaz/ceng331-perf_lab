@@ -9,13 +9,13 @@
  * Please fill in the following team_t struct
  */
 team_t team = {
-    "TEAM", /* Team Name */
+    "TEAM1", /* Team Name */
 
-    "e264440",      /* First student ID */
-    "BAŞAR YILMAz", /* First student name */
+    "e257598",      /* First student ID */
+    "AYTAC BAŞAR ", /* First student name */
 
-    "31", /* Second student ID */
-    "31"  /* Second student name */
+    "e264441",    /* Second student ID */
+    "KEREM BARIŞ" /* Second student name */
 
 };
 
@@ -53,16 +53,27 @@ void naive_batched_mm(int dim, int *b_mat, int *mat, int *dst)
         }
     }
 }
-
-#define BLOCK_SIZE 32
-/*
- * batched_mm - Your current working version of batched matrix multiplication
- * IMPORTANT: This is the version you will be graded on
- */
-char batched_mm_descr[] = "Batched MM with sum reduction: Current working version";
-void batched_mm(int dim, int *b_mat, int *mat, int *dst)
+// char transpose_descr[] = "naive_batched_mm: Naive baseline implementation";
+// void transpose_batched_mm(int dim, int *b_mat, int *mat, int *dst) {
+//     int i,j,k,l;
+//
+//     for (i = 0; i < dim; i++) {
+//         for (j = 0; j < dim; j++) {
+//             for (k = 0; k < dim; k++) {
+//             	if (i == 0){
+//             	    dst[j][k] = 0;
+//             	}
+//             	for (l = 0; l < dim; l++){
+//                     dst[j][k] += b_mat[i][j][l] * mat[k][l];
+//                 }
+//             }
+//         }
+//     }
+// }
+char transpose_descr[] = "naive_batched_mm: Naive baseline implementation";
+void transpose_batched_mm(int dim, int *b_mat, int *mat, int *dst)
 {
-    int j, k, l;
+    int i, j, k, l;
     int dimSquare = dim * dim;
     int *transpose1 = malloc(dimSquare * sizeof(int));
     int *transpose1_cursor = transpose1;
@@ -108,6 +119,39 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
         transpose1 = transpose1_cursor + i;
         for (int j = 0; j < dim; j += 32)
         {
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+            *dst++ = 0;
+
             ((*transpose1)) = *mat++;
             transpose1 += dim;
             ((*transpose1)) = *mat++;
@@ -173,11 +217,9 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
             ((*transpose1)) = *mat++;
             transpose1 += dim;
 
-            int *cursor1 = &b_mat[-dimSquare + i * dim + j];
             for (int k = 0; k < dim; k++)
             {
-                cursor1 += dimSquare;
-                ptrtoplam = cursor1;
+                ptrtoplam = &b_mat[k * dimSquare + i * dim + j];
                 resultara1 += *ptrtoplam++;
                 resultara2 += *ptrtoplam++;
                 resultara3 += *ptrtoplam++;
@@ -280,26 +322,25 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
     newMatrix = newMatrix_cursor;
     transpose1 = transpose1_cursor;
     dst = initialdst;
+    // int *ptr;
     int *ptr1;
     int *ptr2;
     int *ptr3;
+    // int *bmatptr ;
     int result = 0;
-
+    // for (i = 0; i < dim; i++)
+    //{
     for (j = 0; j < dim; j++)
     {
-        int j_dim = j * dim;
-        int *temp_ptr3 = &transpose1[-dim];
-        int *temp_ptr2 = &newMatrix[j_dim];
 
         for (k = 0; k < dim; k++)
         {
-            ptr1 = &dst[j_dim + k];
-
-            ptr2 = temp_ptr2;
-
-            temp_ptr3 += dim;
-            ptr3 = temp_ptr3;
-
+            // if (i == 0){
+            //     dst[j*dim+k] = 0;
+            // }
+            ptr1 = &dst[j * dim + k];
+            ptr2 = &newMatrix[j * dim];
+            ptr3 = &transpose1[k * dim];
             for (l = 0; l < dim; l += 32)
             {
                 result += (*ptr2++) * (*ptr3++);
@@ -339,7 +380,200 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
             result = 0;
         }
     }
+    //}
 }
+char aytac_batched_mm_descr[] = "AYTAC";
+void aytac_batched_mm(int dim, int *b_mat, int *mat, int *dst)
+{
+    int i, j, k, l;
+    // int res;
+    // int res1;
+    // int res2;
+    // int res3;
+    // int res4;
+    // int res5;
+    // int res6;
+    // int res7;
+    // int res8;
+    // int res9;
+    // int res10;
+    // int res11;
+    // int res12;
+    // int res13;
+    // int res14;
+    // int res15;
+    int *ptr2;
+    int *ptr;
+    int *ptr1;
+    // int *dstjdim;
+    // int *ptr3;
+
+    // int *cursorptr3 = &mat[- dim];
+    int dimSquare = dim * dim;
+    int iDimDim = -dimSquare;
+    int *cursorcursorptr2 = &b_mat[iDimDim];
+    int size = dim * dim;
+    int *transpose1 = malloc(size * sizeof(int));
+    int *cursortranspose = transpose1;
+    for (int i = 0; i < dim; i++)
+    {
+        transpose1 = cursortranspose + i;
+        for (int j = 0; j < dim; j += 32)
+        {
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+            transpose1 += dim;
+            ((*transpose1)) = *dst++;
+        }
+    }
+
+    for (i = 0; i < dim; i++)
+    {
+        iDimDim += dimSquare;
+        int jDim = -dim;
+        ptr = &dst[-dim];
+        cursorcursorptr2 += dimSquare;
+        for (j = 0; j < dim; j++)
+        {
+            ptr += dim;
+            jDim += dim;
+            int *cursorptr2 = cursorcursorptr2 + jDim;
+
+            ptr1 = &dst[jDim - 1];
+            if (i == 0)
+            {
+                *(ptr++) = 0;
+            }
+            for (k = 0; k < dim; k++)
+            {
+
+                ptr1++;
+
+                ptr2 = cursorptr2;
+                // ptr3 = cursorptr3+dim;
+                int result = 0;
+                transpose1 = cursortranspose;
+                for (l = 0; l < dim; l += 32)
+                {
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    result += ((*ptr2++) * (*(transpose1++))) + ((*ptr2++) * (*(transpose1++)));
+                    // res  =((*ptr2++)  * (*(ptr3 += dim)))+((*ptr2++) * (*(ptr3 += dim))) ;
+                    // res1 =((*ptr2++)  * (*(ptr3 += dim)))+((*ptr2++)  * (*(ptr3 += dim)));
+                    // res2 =((*ptr2++)  * (*(ptr3 += dim)))+((*ptr2++)  * (*(ptr3 += dim)));
+                    // res3 =((*ptr2++)  * (*(ptr3 += dim)))+((*ptr2++)  * (*(ptr3 += dim)));
+                    // res4 =((*ptr2++)  * (*(ptr3 += dim)))+((*ptr2++)  * (*(ptr3 += dim)));
+                    // res5 =((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res6 =((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res7 =((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res8 =((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res9 =((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res10=((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res11=((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res12=((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res13=((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res14=((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+                    // res15=((*ptr2++) *  (*(ptr3 += dim)))+((*ptr2++) *  (*(ptr3 += dim)));
+
+                    //*ptr1+=(res+res1)+(res2+res3)+(res4+res5)+(res6+res7)+(res8+res9)+(res10+res11)+(res12+res13)+(res14+res15);
+                    // int resson1=res+res1;
+                    // int resson2=res2+res3;
+                    // int resson3=res4+res5;
+                    // int resson4=res6+res7;
+                    // int resson5=res8+res9;
+                    // int resson6=res10+res11;
+                    // int resson7=res12+res13;
+                    // int resson8=res14+res15;
+                }
+                *ptr1 = result;
+                cursortranspose += dim;
+            }
+        }
+    }
+}
+/*
+ * batched_mm - Your current working version of batched matrix multiplication
+ * IMPORTANT: This is the version you will be graded on
+ */
+char batched_mm_descr[] = "Batched MM with sum reduction: Current working version";
+void batched_mm(int dim, int *b_mat, int *mat, int *dst)
+{
+
+    transpose_batched_mm(dim, b_mat, mat, dst);
+}
+
 /*********************************************************************
  * register_batched_mm_functions - Register all of your different versions
  *     of the batched matrix multiplication functions  with the driver by calling the
@@ -350,13 +584,41 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
 
 void register_batched_mm_functions()
 {
-    add_batched_mm_function(&naive_batched_mm, naive_batched_mm_descr);
-    add_batched_mm_function(&batched_mm, batched_mm_descr);
+    // add_batched_mm_function(&naive_batched_mm, naive_batched_mm_descr);
+    add_batched_mm_function(&transpose_batched_mm, batched_mm_descr);
+    // add_batched_mm_function(&aytac_batched_mm, aytac_batched_mm_descr);
     /* ... Register additional test functions here */
 }
 
 /************************
- * POINT REFLECTION KERNEL
+ * POINT REFLECTION KERNELchar aytac_reflect_descr[] = "AYTAC IMPLEMENTATION";
+void aytac_reflect(int dim, int *src, int *dst) {
+    int z,y,a, i, j;
+    z=dim*dim;
+    y=0;
+
+    for (i = 0; i < dim; i+=8)
+    {
+        a=y;
+        for (j = 0; j < dim; j+=8)
+        {
+
+            for(int i1=i;i1<i+8;i1++)
+            {
+
+                for(int j1=j;j1<j+8;j1++)
+                {
+                    dst[ z-1-j1-a] = src[j1+a];
+                }
+                a+=dim;
+            }
+
+        }
+        y+=dim;
+
+    }
+
+}
  ************************/
 
 /*********************************************************
@@ -366,12 +628,64 @@ void register_batched_mm_functions()
 /*
  * naive_reflect - The naive baseline version of point reflection
  */
+
+// #define RIDX(i,j,n) ((i)*(n)+(j))
+char aytac_reflect_descr[] = "AYTAC IMPLEMENTATION";
+void aytac_reflect(int dim, int *src, int *dst)
+{
+    int i, j;
+    // int x;
+    // int blocksize=dim-16;
+    int *newdst = &dst[dim * dim - 1];
+    // x=0;
+
+    for (i = 0; i < dim; i++)
+    {
+
+        for (j = 0; j < dim; j += 32)
+        {
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *(newdst--) = *(src++);
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+            *newdst-- = *src++;
+        }
+        // z-=dim;
+        // x+=dim;
+    }
+}
+
 char naive_reflect_descr[] = "Naive Point Reflection: Naive baseline implementation";
 void naive_reflect(int dim, int *src, int *dst)
 {
     int i, j;
-
-    // RIDX(i,j,n) ((i)*(n)+(j))
 
     for (i = 0; i < dim; i++)
     {
@@ -389,78 +703,8 @@ void naive_reflect(int dim, int *src, int *dst)
 char reflect_descr[] = "Point Reflection: Current working version";
 void reflect(int dim, int *src, int *dst)
 {
-    int i, dim_by_dim = dim * dim;
-    int *tmp_src = src;
-    int block_size = dim_by_dim - 64;
-    int *tmp_dst = &dst[dim_by_dim - 1];
-    for (i = 0; i <= block_size; i += 64)
-    {
-        // printf("dst_index: %d src_index: %d", dst_index, src_index);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-        *(tmp_dst--) = *(tmp_src++);
-    }
+
+    aytac_reflect(dim, src, dst);
 }
 
 /******************************************************************************
@@ -473,7 +717,8 @@ void reflect(int dim, int *src, int *dst)
 
 void register_reflect_functions()
 {
-    add_reflect_function(&naive_reflect, naive_reflect_descr);
+    // add_reflect_function(&naive_reflect, naive_reflect_descr);
     add_reflect_function(&reflect, reflect_descr);
+    // add_reflect_function(&aytac_reflect, aytac_reflect_descr);
     /* ... Register additional test functions here */
 }
