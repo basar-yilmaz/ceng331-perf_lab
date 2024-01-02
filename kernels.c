@@ -64,7 +64,8 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
 {
     int j, k, l;
     int dimSquare = dim * dim;
-    int *transpose1 = malloc(dimSquare * sizeof(int));
+    int dim_intsize = dimSquare * sizeof(int);
+    int *transpose1 = malloc(dim_intsize);
     int *transpose1_cursor = transpose1;
     int *initialdst = dst;
     int resultara1 = 0;
@@ -101,11 +102,12 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
     int resultara32 = 0;
 
     int *ptrtoplam;
-    int *newMatrix = malloc(dimSquare * sizeof(int));
+    int *newMatrix = malloc(dim_intsize);
     int *newMatrix_cursor = newMatrix;
     for (int i = 0; i < dim; i++)
     {
         transpose1 = transpose1_cursor + i;
+        int i_dim = i * dim;
         for (int j = 0; j < dim; j += 32)
         {
             ((*transpose1)) = *mat++;
@@ -173,10 +175,9 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
             ((*transpose1)) = *mat++;
             transpose1 += dim;
 
-            int *cursor1 = &b_mat[-dimSquare + i * dim + j];
+            int *cursor1 = &b_mat[i_dim + j];
             for (int k = 0; k < dim; k++)
             {
-                cursor1 += dimSquare;
                 ptrtoplam = cursor1;
                 resultara1 += *ptrtoplam++;
                 resultara2 += *ptrtoplam++;
@@ -210,6 +211,7 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
                 resultara30 += *ptrtoplam++;
                 resultara31 += *ptrtoplam++;
                 resultara32 += *ptrtoplam++;
+                cursor1 += dimSquare;
             }
             *newMatrix++ = resultara1;
             *newMatrix++ = resultara2;
@@ -294,7 +296,6 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
         for (k = 0; k < dim; k++)
         {
             ptr1 = &dst[j_dim + k];
-
             ptr2 = temp_ptr2;
 
             temp_ptr3 += dim;
@@ -339,6 +340,9 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
             result = 0;
         }
     }
+
+    free(transpose1_cursor);
+    free(newMatrix_cursor);
 }
 /*********************************************************************
  * register_batched_mm_functions - Register all of your different versions
