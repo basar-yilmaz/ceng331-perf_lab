@@ -14,7 +14,7 @@ team_t team = {
     "e264440",      /* First student ID */
     "BAŞAR YILMAz", /* First student name */
 
-    "2644391", /* Second student ID */
+    "e264439", /* Second student ID */
     "BARIS CAN"  /* Second student name */
 
 };
