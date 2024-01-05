@@ -12,7 +12,7 @@ team_t team = {
     "TEAM", /* Team Name */
 
     "e264440",      /* First student ID */
-    "BAŞAR YILMAz", /* First student name */
+    "BAŞAR YILMAZ", /* First student name */
 
     "e264439", /* Second student ID */
     "BARIS CAN"  /* Second student name */
