@@ -103,7 +103,7 @@ char batched_mm_descr[] = "Batched MM with sum reduction: Current working versio
 void batched_mm(int dim, int *b_mat, int *mat, int *dst)
 {
     // declare variables
-    int i, j, k, l, dim_dim, initialDimSize, i_dim, tempAccumulator;
+    int i, j, k, dim_dim, initialDimSize, i_dim, tempAccumulator;
     int *tensorTrans, *tensorTrans_pointer;
     int *dest_pointer;
     int *reducedMatrix, *reducedMatrix_pointer;
@@ -246,21 +246,27 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
     // at this point reducedMatrix, tensorTrans and dst pointers
     // are free to use
 
-    tempAccumulator = 0;
+    int *temp_tensorPointer, *temp_reducedPointer;
 
-    for (j = 0; j < dim; j++)
+    for (i = 0; i < dim; i++)
     {
-        int j_dim = j * dim;
-        int *temp_tensorPointer = &tensorTrans[-dim];
-        int *temp_ptr2 = &reducedMatrix[j_dim];
-        for (k = 0; k < dim; k++)
+        i_dim = i * dim;
+        temp_tensorPointer = &tensorTrans[-dim];
+        temp_reducedPointer = &reducedMatrix[i_dim];
+        for (j = 0; j < dim; j++)
         {
+            // reset the tempAccumulator
             tempAccumulator = 0;
-            reducedMatrix_pointer = temp_ptr2;
+
+            // reset the reducedMatrix_pointer
+            reducedMatrix_pointer = temp_reducedPointer;
+
+            // reset the tensorTrans_pointer
+            // but this time we will go one dimension up
             temp_tensorPointer += dim;
             tensorTrans_pointer = temp_tensorPointer;
 
-            for (l = 0; l < dim; l += 32)
+            for (k = 0; k < dim; k += 32)
             {
                 tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
                 tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
@@ -295,7 +301,7 @@ void batched_mm(int dim, int *b_mat, int *mat, int *dst)
                 tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
                 tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
             }
-            dest_pointer = &dst[j_dim + k];
+            dest_pointer = &dst[i_dim + j];
             *dest_pointer += tempAccumulator;
         }
     }
