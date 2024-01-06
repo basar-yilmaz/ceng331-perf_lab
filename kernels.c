@@ -12,10 +12,10 @@ team_t team = {
     "TEAM", /* Team Name */
 
     "e264440",      /* First student ID */
-    "BAŞAR YILMAZ", /* First student name */
+    "BAŞAR YILMAz", /* First student name */
 
-    "e264439", /* Second student ID */
-    "BARIS CAN"  /* Second student name */
+    "31", /* Second student ID */
+    "31"  /* Second student name */
 
 };
 
@@ -54,7 +54,47 @@ void naive_batched_mm(int dim, int *b_mat, int *mat, int *dst)
     }
 }
 
-#define BLOCK_SIZE 32
+typedef struct matrix_block
+{
+    int acc0, acc1, acc2, acc3, acc4, acc5, acc6, acc7, acc8, acc9, acc10, acc11, acc12, acc13, acc14, acc15, acc16, acc17, acc18, acc19, acc20, acc21, acc22, acc23, acc24, acc25, acc26, acc27, acc28, acc29, acc30, acc31;
+} matrix_block;
+
+void initializeStruct(struct matrix_block *myStruct)
+{
+    myStruct->acc0 = 0;
+    myStruct->acc1 = 0;
+    myStruct->acc2 = 0;
+    myStruct->acc3 = 0;
+    myStruct->acc4 = 0;
+    myStruct->acc5 = 0;
+    myStruct->acc6 = 0;
+    myStruct->acc7 = 0;
+    myStruct->acc8 = 0;
+    myStruct->acc9 = 0;
+    myStruct->acc10 = 0;
+    myStruct->acc11 = 0;
+    myStruct->acc12 = 0;
+    myStruct->acc13 = 0;
+    myStruct->acc14 = 0;
+    myStruct->acc15 = 0;
+    myStruct->acc16 = 0;
+    myStruct->acc17 = 0;
+    myStruct->acc18 = 0;
+    myStruct->acc19 = 0;
+    myStruct->acc20 = 0;
+    myStruct->acc21 = 0;
+    myStruct->acc22 = 0;
+    myStruct->acc23 = 0;
+    myStruct->acc24 = 0;
+    myStruct->acc25 = 0;
+    myStruct->acc26 = 0;
+    myStruct->acc27 = 0;
+    myStruct->acc28 = 0;
+    myStruct->acc29 = 0;
+    myStruct->acc30 = 0;
+    myStruct->acc31 = 0;
+}
+
 /*
  * batched_mm - Your current working version of batched matrix multiplication
  * IMPORTANT: This is the version you will be graded on
@@ -62,287 +102,203 @@ void naive_batched_mm(int dim, int *b_mat, int *mat, int *dst)
 char batched_mm_descr[] = "Batched MM with sum reduction: Current working version";
 void batched_mm(int dim, int *b_mat, int *mat, int *dst)
 {
-    int j, k, l;
-    int dimSquare = dim * dim;
-    int dim_intsize = dimSquare * sizeof(int);
-    int *transpose1 = malloc(dim_intsize);
-    int *transpose1_cursor = transpose1;
-    int *initialdst = dst;
-    int temp_acc1 = 0;
-    int temp_acc2 = 0;
-    int temp_acc3 = 0;
-    int temp_acc4 = 0;
-    int temp_acc5 = 0;
-    int temp_acc6 = 0;
-    int temp_acc7 = 0;
-    int temp_acc8 = 0;
-    int temp_acc9 = 0;
-    int temp_acc10 = 0;
-    int temp_acc11 = 0;
-    int temp_acc12 = 0;
-    int temp_acc13 = 0;
-    int temp_acc14 = 0;
-    int temp_acc15 = 0;
-    int temp_acc16 = 0;
-    int temp_acc17 = 0;
-    int temp_acc18 = 0;
-    int temp_acc19 = 0;
-    int temp_acc20 = 0;
-    int temp_acc21 = 0;
-    int temp_acc22 = 0;
-    int temp_acc23 = 0;
-    int temp_acc24 = 0;
-    int temp_acc25 = 0;
-    int temp_acc26 = 0;
-    int temp_acc27 = 0;
-    int temp_acc28 = 0;
-    int temp_acc29 = 0;
-    int temp_acc30 = 0;
-    int temp_acc31 = 0;
-    int temp_acc32 = 0;
+    // declare variables
+    int i, j, k, l, dim_dim, initialDimSize, i_dim, tempAccumulator;
+    int *tensorTrans, *tensorTrans_pointer;
+    int *dest_pointer;
+    int *reducedMatrix, *reducedMatrix_pointer;
 
+    // just some pointers for temporary use
+
+    // will hold the temporary ith dimension's jth row's value of batched matrix
     int *ptrtoplam;
-    int *newMatrix = malloc(dim_intsize);
-    int *newMatrix_cursor = newMatrix;
-    for (int i = 0; i < dim; i++)
-    {
-        transpose1 = transpose1_cursor + i;
-        int i_dim = i * dim;
-        for (int j = 0; j < dim; j += 32)
-        {
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
-            ((*transpose1)) = *mat++;
-            transpose1 += dim;
 
-            int *cursor1 = &b_mat[i_dim + j];
-            for (int k = 0; k < dim; k++)
+    // keep dim*dim value for later use
+    dim_dim = dim * dim;
+
+    // determine the size of the initial matrix
+    initialDimSize = dim_dim * sizeof(int);
+
+    // allocate memory for the transposed matrix
+    tensorTrans = malloc(initialDimSize);
+
+    // create a pointer to the first element of the transposed matrix for filling
+    tensorTrans_pointer = tensorTrans;
+
+    // create a pointer to the first element of the initial matrix reading
+    dest_pointer = dst;
+
+    // create a struct for holding the accumulator values
+    // we will use this later for sum reduction
+    matrix_block accumulator;
+    initializeStruct(&accumulator);
+
+    // allocate memory for the new matrix
+    reducedMatrix = malloc(initialDimSize);
+
+    // create a pointer to the first element of the new matrix to go back when needed
+    reducedMatrix_pointer = reducedMatrix;
+
+    for (i = 0; i < dim; i++)
+    {
+        tensorTrans_pointer = tensorTrans + i;
+        i_dim = i * dim;
+        for (j = 0; j < dim; j += 32)
+        {
+            for (k = 0; k < 8; k++)
             {
-                ptrtoplam = cursor1;
-                temp_acc1 += *ptrtoplam++;
-                temp_acc2 += *ptrtoplam++;
-                temp_acc3 += *ptrtoplam++;
-                temp_acc4 += *ptrtoplam++;
-                temp_acc5 += *ptrtoplam++;
-                temp_acc6 += *ptrtoplam++;
-                temp_acc7 += *ptrtoplam++;
-                temp_acc8 += *ptrtoplam++;
-                temp_acc9 += *ptrtoplam++;
-                temp_acc10 += *ptrtoplam++;
-                temp_acc11 += *ptrtoplam++;
-                temp_acc12 += *ptrtoplam++;
-                temp_acc13 += *ptrtoplam++;
-                temp_acc14 += *ptrtoplam++;
-                temp_acc15 += *ptrtoplam++;
-                temp_acc16 += *ptrtoplam++;
-                temp_acc17 += *ptrtoplam++;
-                temp_acc18 += *ptrtoplam++;
-                temp_acc19 += *ptrtoplam++;
-                temp_acc20 += *ptrtoplam++;
-                temp_acc21 += *ptrtoplam++;
-                temp_acc22 += *ptrtoplam++;
-                temp_acc23 += *ptrtoplam++;
-                temp_acc24 += *ptrtoplam++;
-                temp_acc25 += *ptrtoplam++;
-                temp_acc26 += *ptrtoplam++;
-                temp_acc27 += *ptrtoplam++;
-                temp_acc28 += *ptrtoplam++;
-                temp_acc29 += *ptrtoplam++;
-                temp_acc30 += *ptrtoplam++;
-                temp_acc31 += *ptrtoplam++;
-                temp_acc32 += *ptrtoplam++;
-                cursor1 += dimSquare;
+                ((*tensorTrans_pointer)) = *mat++;
+                tensorTrans_pointer += dim;
+                ((*tensorTrans_pointer)) = *mat++;
+                tensorTrans_pointer += dim;
+                ((*tensorTrans_pointer)) = *mat++;
+                tensorTrans_pointer += dim;
+                ((*tensorTrans_pointer)) = *mat++;
+                tensorTrans_pointer += dim;
             }
-            *newMatrix++ = temp_acc1;
-            *newMatrix++ = temp_acc2;
-            *newMatrix++ = temp_acc3;
-            *newMatrix++ = temp_acc4;
-            *newMatrix++ = temp_acc5;
-            *newMatrix++ = temp_acc6;
-            *newMatrix++ = temp_acc7;
-            *newMatrix++ = temp_acc8;
-            *newMatrix++ = temp_acc9;
-            *newMatrix++ = temp_acc10;
-            *newMatrix++ = temp_acc11;
-            *newMatrix++ = temp_acc12;
-            *newMatrix++ = temp_acc13;
-            *newMatrix++ = temp_acc14;
-            *newMatrix++ = temp_acc15;
-            *newMatrix++ = temp_acc16;
-            *newMatrix++ = temp_acc17;
-            *newMatrix++ = temp_acc18;
-            *newMatrix++ = temp_acc19;
-            *newMatrix++ = temp_acc20;
-            *newMatrix++ = temp_acc21;
-            *newMatrix++ = temp_acc22;
-            *newMatrix++ = temp_acc23;
-            *newMatrix++ = temp_acc24;
-            *newMatrix++ = temp_acc25;
-            *newMatrix++ = temp_acc26;
-            *newMatrix++ = temp_acc27;
-            *newMatrix++ = temp_acc28;
-            *newMatrix++ = temp_acc29;
-            *newMatrix++ = temp_acc30;
-            *newMatrix++ = temp_acc31;
-            *newMatrix++ = temp_acc32;
-            temp_acc1 = 0;
-            temp_acc2 = 0;
-            temp_acc3 = 0;
-            temp_acc4 = 0;
-            temp_acc5 = 0;
-            temp_acc6 = 0;
-            temp_acc7 = 0;
-            temp_acc8 = 0;
-            temp_acc9 = 0;
-            temp_acc10 = 0;
-            temp_acc11 = 0;
-            temp_acc12 = 0;
-            temp_acc13 = 0;
-            temp_acc14 = 0;
-            temp_acc15 = 0;
-            temp_acc16 = 0;
-            temp_acc17 = 0;
-            temp_acc18 = 0;
-            temp_acc19 = 0;
-            temp_acc20 = 0;
-            temp_acc21 = 0;
-            temp_acc22 = 0;
-            temp_acc23 = 0;
-            temp_acc24 = 0;
-            temp_acc25 = 0;
-            temp_acc26 = 0;
-            temp_acc27 = 0;
-            temp_acc28 = 0;
-            temp_acc29 = 0;
-            temp_acc30 = 0;
-            temp_acc31 = 0;
-            temp_acc32 = 0;
+
+            int *pointer1 = &b_mat[i_dim + j];
+            for (k = 0; k < dim; k++)
+            {
+                ptrtoplam = pointer1;
+                accumulator.acc0 += *ptrtoplam++;
+                accumulator.acc1 += *ptrtoplam++;
+                accumulator.acc2 += *ptrtoplam++;
+                accumulator.acc3 += *ptrtoplam++;
+                accumulator.acc4 += *ptrtoplam++;
+                accumulator.acc5 += *ptrtoplam++;
+                accumulator.acc6 += *ptrtoplam++;
+                accumulator.acc7 += *ptrtoplam++;
+                accumulator.acc8 += *ptrtoplam++;
+                accumulator.acc9 += *ptrtoplam++;
+                accumulator.acc10 += *ptrtoplam++;
+                accumulator.acc11 += *ptrtoplam++;
+                accumulator.acc12 += *ptrtoplam++;
+                accumulator.acc13 += *ptrtoplam++;
+                accumulator.acc14 += *ptrtoplam++;
+                accumulator.acc15 += *ptrtoplam++;
+                accumulator.acc16 += *ptrtoplam++;
+                accumulator.acc17 += *ptrtoplam++;
+                accumulator.acc18 += *ptrtoplam++;
+                accumulator.acc19 += *ptrtoplam++;
+                accumulator.acc20 += *ptrtoplam++;
+                accumulator.acc21 += *ptrtoplam++;
+                accumulator.acc22 += *ptrtoplam++;
+                accumulator.acc23 += *ptrtoplam++;
+                accumulator.acc24 += *ptrtoplam++;
+                accumulator.acc25 += *ptrtoplam++;
+                accumulator.acc26 += *ptrtoplam++;
+                accumulator.acc27 += *ptrtoplam++;
+                accumulator.acc28 += *ptrtoplam++;
+                accumulator.acc29 += *ptrtoplam++;
+                accumulator.acc30 += *ptrtoplam++;
+                accumulator.acc31 += *ptrtoplam++;
+
+                // we can jump from this matrix to the next one in the z+1 dimension
+                pointer1 += dim_dim;
+            }
+            *reducedMatrix++ = accumulator.acc0;
+            *reducedMatrix++ = accumulator.acc1;
+            *reducedMatrix++ = accumulator.acc2;
+            *reducedMatrix++ = accumulator.acc3;
+            *reducedMatrix++ = accumulator.acc4;
+            *reducedMatrix++ = accumulator.acc5;
+            *reducedMatrix++ = accumulator.acc6;
+            *reducedMatrix++ = accumulator.acc7;
+            *reducedMatrix++ = accumulator.acc8;
+            *reducedMatrix++ = accumulator.acc9;
+            *reducedMatrix++ = accumulator.acc10;
+            *reducedMatrix++ = accumulator.acc11;
+            *reducedMatrix++ = accumulator.acc12;
+            *reducedMatrix++ = accumulator.acc13;
+            *reducedMatrix++ = accumulator.acc14;
+            *reducedMatrix++ = accumulator.acc15;
+            *reducedMatrix++ = accumulator.acc16;
+            *reducedMatrix++ = accumulator.acc17;
+            *reducedMatrix++ = accumulator.acc18;
+            *reducedMatrix++ = accumulator.acc19;
+            *reducedMatrix++ = accumulator.acc20;
+            *reducedMatrix++ = accumulator.acc21;
+            *reducedMatrix++ = accumulator.acc22;
+            *reducedMatrix++ = accumulator.acc23;
+            *reducedMatrix++ = accumulator.acc24;
+            *reducedMatrix++ = accumulator.acc25;
+            *reducedMatrix++ = accumulator.acc26;
+            *reducedMatrix++ = accumulator.acc27;
+            *reducedMatrix++ = accumulator.acc28;
+            *reducedMatrix++ = accumulator.acc29;
+            *reducedMatrix++ = accumulator.acc30;
+            *reducedMatrix++ = accumulator.acc31;
+
+            // reset the accumulator
+            initializeStruct(&accumulator);
         }
     }
-    newMatrix = newMatrix_cursor;
-    transpose1 = transpose1_cursor;
-    dst = initialdst;
-    int *ptr1;
-    int *ptr2;
-    int *ptr3;
-    int result = 0;
+
+    // get the pointer to the first element of the reduced matrix again
+    // using the pointer we created before
+    reducedMatrix = reducedMatrix_pointer;
+
+    // get the pointer to the first element of the dst again
+    // using the pointer we created before
+    dst = dest_pointer;
+
+    // at this point reducedMatrix, tensorTrans and dst pointers
+    // are free to use
+
+    tempAccumulator = 0;
 
     for (j = 0; j < dim; j++)
     {
         int j_dim = j * dim;
-        int *temp_ptr3 = &transpose1[-dim];
-        int *temp_ptr2 = &newMatrix[j_dim];
-
+        int *temp_tensorPointer = &tensorTrans[-dim];
+        int *temp_ptr2 = &reducedMatrix[j_dim];
         for (k = 0; k < dim; k++)
         {
-            ptr1 = &dst[j_dim + k];
-            ptr2 = temp_ptr2;
-
-            temp_ptr3 += dim;
-            ptr3 = temp_ptr3;
+            tempAccumulator = 0;
+            reducedMatrix_pointer = temp_ptr2;
+            temp_tensorPointer += dim;
+            tensorTrans_pointer = temp_tensorPointer;
 
             for (l = 0; l < dim; l += 32)
             {
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
-                result += (*ptr2++) * (*ptr3++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
+                tempAccumulator += (*reducedMatrix_pointer++) * (*tensorTrans_pointer++);
             }
-            *ptr1 += result;
-            result = 0;
+            dest_pointer = &dst[j_dim + k];
+            *dest_pointer += tempAccumulator;
         }
     }
-
-    free(transpose1_cursor);
-    free(newMatrix_cursor);
 }
 /*********************************************************************
  * register_batched_mm_functions - Register all of your different versions
